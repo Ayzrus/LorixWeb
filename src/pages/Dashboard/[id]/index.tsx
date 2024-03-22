@@ -23,15 +23,15 @@ const DashboardPage: NextPageWithLayout = () => {
   const [filteredCommands, setFilteredCommands] = useState<Command[]>([]);
   const [selectedCommand, setSelectedCommand] = useState<Command | null>(null);
   const [isInputModified, setIsInputModified] = useState(false);
-  const [selectedCommandId, setSelectedCommandId] = useState<string | null>(
-    null
-  );
   const [workCooldown, setWorkCooldown] = useState("");
   const [workMinMoney, setWorkMinMoney] = useState("");
   const [workMaxMoney, setWorkMaxMoney] = useState("");
   const [robCooldown, setRobCooldown] = useState("");
   const [robChance, setRobChance] = useState("");
   const [robThef, setRobThef] = useState("");
+  const [slutCooldown, setSlutCooldown] = useState("");
+  const [slutMinMoney, setSlutMinMoney] = useState("");
+  const [slutMaxMoney, setSlutMaxMoney] = useState("");
 
   const handleSave = async () => {
     try {
@@ -73,6 +73,22 @@ const DashboardPage: NextPageWithLayout = () => {
         );
         toast("Dados do comando rob atualizados com sucesso.");
         console.log("Dados de rob atualizados com sucesso.");
+      } else if (selectedCommand.En === "Slut") {
+        const response = await fetch(
+          `${API_URL}/guilds/${guildId}/updateSlut/${slutCooldown || "0"}/${
+            slutMinMoney || 0
+          }/${slutMaxMoney || 0}`,
+          {
+            mode: "no-cors",
+            credentials: "include",
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        toast("Dados do comando slut atualizados com sucesso.");
+        console.log("Dados de slut atualizados com sucesso.");
       }
     } catch (error) {
       console.error("Erro ao atualizar dados:", error);
@@ -90,6 +106,11 @@ const DashboardPage: NextPageWithLayout = () => {
         Id: "2",
         En: "Rob",
         PT: "Rob",
+      },
+      {
+        Id: "3",
+        En: "Slut",
+        PT: "Slut",
       },
     ]);
   }, [language, workCooldown, workMaxMoney, workMinMoney]);
@@ -109,14 +130,13 @@ const DashboardPage: NextPageWithLayout = () => {
   };
 
   const handleCommandClick = (command: Command) => {
-    setRobChance("")
-    setRobCooldown("")
-    setRobThef("")
-    setWorkCooldown("")
-    setWorkMaxMoney("")
-    setWorkMinMoney("")
-    setIsInputModified(false)
-    setSelectedCommandId(command.En);
+    setRobChance("");
+    setRobCooldown("");
+    setRobThef("");
+    setWorkCooldown("");
+    setWorkMaxMoney("");
+    setWorkMinMoney("");
+    setIsInputModified(false);
     setSelectedCommand(command);
   };
 
@@ -268,6 +288,62 @@ const DashboardPage: NextPageWithLayout = () => {
                         setIsInputModified(true);
                       }}
                       placeholder="Default 50%"
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              ) : "" || (selectedCommand && selectedCommand.En === "Slut") ? (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="w-full">
+                    <Label htmlFor="slutcw">
+                      {language === "en"
+                        ? "Slut Cooldown (seconds)"
+                        : "Slut Cooldown (segundos)"}
+                    </Label>
+                    <Input
+                      type="text"
+                      id="slutcw"
+                      placeholder="Default 520"
+                      value={slutCooldown}
+                      onChange={(e) => {
+                        setSlutCooldown(e.target.value);
+                        setIsInputModified(true);
+                      }}
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Label htmlFor="slutmin">
+                      {language === "en"
+                        ? "Slut Min Money"
+                        : "Slut Minimo Dinheiro"}
+                    </Label>
+                    <Input
+                      type="number"
+                      id="slutmin"
+                      value={slutMinMoney}
+                      onChange={(e) => {
+                        setSlutMinMoney(e.target.value);
+                        setIsInputModified(true);
+                      }}
+                      placeholder="Default 800"
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Label htmlFor="slutmax">
+                      {language === "en"
+                        ? "Slut Max Money"
+                        : "Slut Maximo Dinheiro"}
+                    </Label>
+                    <Input
+                      type="number"
+                      id="slutmax"
+                      value={slutMaxMoney}
+                      onChange={(e) => {
+                        setSlutMaxMoney(e.target.value);
+                        setIsInputModified(true);
+                      }}
+                      placeholder="Default 8000"
                       className="w-full"
                     />
                   </div>
